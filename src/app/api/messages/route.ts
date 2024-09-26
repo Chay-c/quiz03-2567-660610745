@@ -7,7 +7,7 @@ export const GET = async (request: NextRequest) => {
   readDB();
 
   const roomId = request.nextUrl.searchParams.get("roomId");
-  const room = DB.rooms.find((room : any) => room.roomId === roomId);
+  const room = DB.rooms.find((room ) => room.roomId === roomId);
 
   if (!room) {
     return NextResponse.json(
@@ -19,7 +19,7 @@ export const GET = async (request: NextRequest) => {
     );
   }
 
-  const messages = DB.messages.filter((message : any) => message.roomId === roomId);
+  const messages = DB.messages.filter((message ) => message.roomId === roomId);
 
   return NextResponse.json({
     ok: true,
@@ -36,7 +36,7 @@ export const POST = async (request: NextRequest) => {
   const roomId = body.roomId 
   const messageText = body.messageText 
 
-  const room = DB.rooms.find((room : any) => room.roomId === roomId);
+  const room = DB.rooms.find((room ) => room.roomId === roomId);
 
   if (!room) {
     return NextResponse.json(
@@ -82,7 +82,7 @@ if (!payload || ( payload.role !== "SUPER_ADMIN")) {
   const messageId = body.messageId 
 
   const messageIndex = DB.messages.findIndex(
-    (message : any) => message.roomId === roomId && message.messageId === messageId
+    (message ) => message.roomId === roomId && message.messageId === messageId
   );
 
   if (messageIndex === -1) {

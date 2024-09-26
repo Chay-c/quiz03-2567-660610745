@@ -35,7 +35,7 @@ export const POST = async (request: NextRequest) => {
   const roomName = body.roomName; 
 
   // Check if the room already exists
-  const existingRoom = DB.rooms.find((room : any) => room.roomName === roomName);
+  const existingRoom = DB.rooms.find((room ) => room.roomName === roomName);
   if (existingRoom) {
     return NextResponse.json(
       {
