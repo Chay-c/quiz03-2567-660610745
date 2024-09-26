@@ -30,12 +30,9 @@ export const GET = async (request: NextRequest) => {
 export const POST = async (request: NextRequest) => {
   readDB();
 
-  const payload = checkToken();
   const body = await request.json()
-
   const roomId = body.roomId 
   const messageText = body.messageText 
-
   const room = DB.rooms.find((room ) => room.roomId === roomId);
 
   if (!room) {

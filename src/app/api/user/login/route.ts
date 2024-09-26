@@ -9,7 +9,7 @@ export const POST = async (request: NextRequest) => {
   const { username, password } = body;
 
   const user = DB.users.find(
-    (user : any) => user.username === username && user.password === password
+    (user ) => user.username === username && user.password === password
   );
 
   if (!user) {
