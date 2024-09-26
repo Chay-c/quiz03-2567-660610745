@@ -6,57 +6,96 @@ import { NextRequest, NextResponse } from "next/server";
 export const GET = async (request: NextRequest) => {
   readDB();
 
-  // return NextResponse.json(
-  //   {
-  //     ok: false,
-  //     message: `Room is not found`,
-  //   },
-  //   { status: 404 }
-  // );
+  const roomId = request.nextUrl.searchParams.get("roomId");
+  const room = DB.rooms.find((room : any) => room.roomId === roomId);
+
+  if (!room) {
+    return NextResponse.json(
+      {
+        ok: false,
+        message: "Room is not found",
+      },
+      { status: 404 }
+    );
+  }
+
+  const messages = DB.messages.filter((message : any) => message.roomId === roomId);
+
+  return NextResponse.json({
+    ok: true,
+    messages
+  });
 };
 
 export const POST = async (request: NextRequest) => {
   readDB();
 
-  // return NextResponse.json(
-  //   {
-  //     ok: false,
-  //     message: `Room is not found`,
-  //   },
-  //   { status: 404 }
-  // );
+  const payload = checkToken();
+  const body = await request.json()
+
+  const roomId = body.roomId 
+  const messageText = body.messageText 
+
+  const room = DB.rooms.find((room : any) => room.roomId === roomId);
+
+  if (!room) {
+    return NextResponse.json(
+      {
+        ok: false,
+        message: "Room is not found",
+      },
+      { status: 404 }
+    );
+  }
 
   const messageId = nanoid();
+
+  DB.messages.push({ roomId, messageId, messageText });
 
   writeDB();
 
   return NextResponse.json({
     ok: true,
-    // messageId,
+    messageId,
     message: "Message has been sent",
   });
 };
 
 export const DELETE = async (request: NextRequest) => {
-  const payload = checkToken();
+const payload = checkToken();
+const body = await request.json();
 
-  // return NextResponse.json(
-  //   {
-  //     ok: false,
-  //     message: "Invalid token",
-  //   },
-  //   { status: 401 }
-  // );
+//quiz said only for SUPER_ADMIN
 
-  readDB();
+if (!payload || ( payload.role !== "SUPER_ADMIN")) {
+  return NextResponse.json(
+    {
+      ok: false,
+      message: "Invalid token",
+    },
+    { status: 401 }
+  );
+}
+ 
 
-  // return NextResponse.json(
-  //   {
-  //     ok: false,
-  //     message: "Message is not found",
-  //   },
-  //   { status: 404 }
-  // );
+  const roomId = body.roomId 
+  const messageId = body.messageId 
+
+  const messageIndex = DB.messages.findIndex(
+    (message : any) => message.roomId === roomId && message.messageId === messageId
+  );
+
+  if (messageIndex === -1) {
+    return NextResponse.json(
+      {
+        ok: false,
+        message: "Message is not found",
+      },
+      { status: 404 }
+    );
+  }
+
+  DB.messages.splice(messageIndex, 1);
 
   writeDB();
 
@@ -65,3 +104,5 @@ export const DELETE = async (request: NextRequest) => {
     message: "Message has been deleted",
   });
 };
+
+  
